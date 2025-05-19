@@ -1,0 +1,44 @@
+<svg width="500" height="400" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="500" height="400" fill="#f8f9fa" rx="10" ry="10" />
+  
+  <!-- Mortar and Pestle -->
+  <ellipse cx="250" cy="280" rx="100" ry="30" fill="#e0e0e0" />
+  <path d="M180 280 C180 220, 320 220, 320 280" fill="#d0d0d0" stroke="#a0a0a0" stroke-width="3" />
+  <ellipse cx="250" cy="220" rx="70" ry="20" fill="#e0e0e0" />
+  
+  <!-- Pestle -->
+  <path d="M300 180 L320 280 L330 280 L310 170" fill="#c0c0c0" stroke="#a0a0a0" stroke-width="2" />
+  
+  <!-- Herbs and Leaves -->
+  <!-- Leaf 1 -->
+  <path d="M200 150 C230 120, 260 140, 240 170 C270 150, 250 110, 200 150" fill="#90EE90" stroke="#70c970" stroke-width="1" />
+  
+  <!-- Leaf 2 -->
+  <path d="M170 180 C200 150, 230 170, 210 200 C240 180, 220 140, 170 180" fill="#90EE90" stroke="#70c970" stroke-width="1" />
+  
+  <!-- Leaf 3 -->
+  <path d="M260 130 C290 100, 320 120, 300 150 C330 130, 310 90, 260 130" fill="#90EE90" stroke="#70c970" stroke-width="1" />
+  
+  <!-- Leaf 4 -->
+  <path d="M230 100 C260 70, 290 90, 270 120 C300 100, 280 60, 230 100" fill="#90EE90" stroke="#70c970" stroke-width="1" />
+  
+  <!-- Leaf 5 -->
+  <path d="M180 120 C210 90, 240 110, 220 140 C250 120, 230 80, 180 120" fill="#90EE90" stroke="#70c970" stroke-width="1" />
+  
+  <!-- Stem -->
+  <path d="M250 100 L250 200" stroke="#70c970" stroke-width="3" fill="none" />
+  
+  <!-- Small Herbs in Mortar -->
+  <circle cx="230" cy="250" r="8" fill="#90EE90" />
+  <circle cx="250" cy="240" r="10" fill="#90EE90" />
+  <circle cx="270" cy="255" r="7" fill="#90EE90" />
+  <circle cx="240" cy="260" r="9" fill="#90EE90" />
+  <circle cx="260" cy="245" r="8" fill="#90EE90" />
+  
+  <!-- Decorative Elements -->
+  <circle cx="150" cy="100" r="20" fill="#90EE90" opacity="0.3" />
+  <circle cx="350" cy="150" r="25" fill="#90EE90" opacity="0.3" />
+  <circle cx="120" cy="200" r="15" fill="#90EE90" opacity="0.3" />
+  <circle cx="380" cy="220" r="18" fill="#90EE90" opacity="0.3" />
+</svg>

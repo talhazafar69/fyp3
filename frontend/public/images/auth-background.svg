@@ -1,0 +1,25 @@
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Pattern -->
+  <rect width="500" height="500" fill="#f8f9fa" />
+  
+  <!-- Decorative Elements -->
+  <circle cx="50" cy="50" r="30" fill="#90EE90" opacity="0.2" />
+  <circle cx="450" cy="50" r="20" fill="#90EE90" opacity="0.3" />
+  <circle cx="50" cy="450" r="25" fill="#90EE90" opacity="0.2" />
+  <circle cx="450" cy="450" r="35" fill="#90EE90" opacity="0.3" />
+  
+  <!-- Leaf Patterns -->
+  <path d="M100 100 C130 70, 160 90, 140 120 C170 100, 150 60, 100 100" fill="#90EE90" opacity="0.2" />
+  <path d="M400 100 C430 70, 460 90, 440 120 C470 100, 450 60, 400 100" fill="#90EE90" opacity="0.2" />
+  <path d="M100 400 C130 370, 160 390, 140 420 C170 400, 150 360, 100 400" fill="#90EE90" opacity="0.2" />
+  <path d="M400 400 C430 370, 460 390, 440 420 C470 400, 450 360, 400 400" fill="#90EE90" opacity="0.2" />
+  
+  <!-- Center Decoration -->
+  <circle cx="250" cy="250" r="100" fill="#90EE90" opacity="0.1" />
+  
+  <!-- Abstract Lines -->
+  <line x1="0" y1="150" x2="500" y2="150" stroke="#90EE90" stroke-width="1" opacity="0.2" />
+  <line x1="0" y1="350" x2="500" y2="350" stroke="#90EE90" stroke-width="1" opacity="0.2" />
+  <line x1="150" y1="0" x2="150" y2="500" stroke="#90EE90" stroke-width="1" opacity="0.2" />
+  <line x1="350" y1="0" x2="350" y2="500" stroke="#90EE90" stroke-width="1" opacity="0.2" />
+</svg>
