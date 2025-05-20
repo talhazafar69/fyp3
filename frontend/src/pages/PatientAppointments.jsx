@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { fetchApi } from '../config/api';
 import '../styles/PatientAppointments.css';
 
 const PatientAppointments = () => {
@@ -30,34 +31,14 @@ const PatientAppointments = () => {
         }
         
         // Get user data
-        const userResponse = await fetch('/api/auth/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!userResponse.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        
-        const userData = await userResponse.json();
+        const userData = await fetchApi('/api/auth/me');
         setUserData({
           name: userData.name,
           email: userData.email
         });
         
         // Get patient appointments
-        const appointmentsResponse = await fetch('/api/appointments', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!appointmentsResponse.ok) {
-          throw new Error('Failed to fetch appointments');
-        }
-        
-        const appointmentsData = await appointmentsResponse.json();
+        const appointmentsData = await fetchApi('/api/appointments');
         console.log('Fetched appointments:', appointmentsData);
         
         // Format appointments data
@@ -91,7 +72,6 @@ const PatientAppointments = () => {
       } catch (err) {
         console.error('Error fetching appointments:', err);
         setError('Failed to load your appointments. Please try again later.');
-      } finally {
         setLoading(false);
       }
     };

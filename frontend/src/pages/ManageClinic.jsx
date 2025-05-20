@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchApi } from '../config/api';
 import '../styles/ManageClinic.css';
 
 const ManageClinic = () => {
@@ -36,53 +37,16 @@ const ManageClinic = () => {
       try {
         setLoading(true);
         setError(null);
-        
-        // Get current user's token and data
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('No authentication token found');
-        }
-
-        const userResponse = await fetch('/api/auth/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!userResponse.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-
-        const userData = await userResponse.json();
-        if (!userData || !userData._id) {
-          throw new Error('Invalid user data received');
-        }
-
-        // Fetch clinic data using the hakeem ID
-        const clinicResponse = await fetch(`/api/clinics/hakeem/${userData._id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (clinicResponse.ok) {
-          const clinicData = await clinicResponse.json();
-          setClinic(clinicData);
-        } else if (clinicResponse.status === 404) {
-          // This is a first-time user, keep the default empty form
-          console.log('No existing clinic found for this hakeem');
-        } else {
-          const errorData = await clinicResponse.json();
-          throw new Error(errorData.message || 'Failed to fetch clinic data');
-        }
+        const userData = await fetchApi('/api/auth/me');
+        if (!userData || !userData._id) throw new Error('Invalid user data received');
+        const clinicData = await fetchApi(`/api/clinics/hakeem/${userData._id}`);
+        setClinic(clinicData);
+        setLoading(false);
       } catch (err) {
-        console.error('Error fetching clinic data:', err);
         setError(err.message);
-      } finally {
         setLoading(false);
       }
     };
-
     fetchClinicData();
   }, []);
 
@@ -214,13 +178,8 @@ const ManageClinic = () => {
 
       console.log('Submitting clinic data:', submitData);
 
-      const response = await fetch(url, {
+      const response = await fetchApi(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        credentials: 'include',
         body: JSON.stringify(submitData)
       });
 

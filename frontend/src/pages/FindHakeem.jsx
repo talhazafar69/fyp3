@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { fetchApi } from '../config/api';
 import '../styles/FindHakeem.css';
 
 const FindHakeem = () => {
@@ -69,46 +70,12 @@ const FindHakeem = () => {
   const fetchAllHakeems = async () => {
     setLoading(true);
     setError(null);
-
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        window.location.href = '/login';
-        return;
-      }
-
-      const response = await fetch('/api/hakeems/search', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
-      });
-
-      if (response.status === 401) {
-        setError('Your session has expired. Please login again.');
-        return;
-      }
-
-      if (!response.ok) throw new Error('Failed to fetch hakeems');
-      
-      const data = await response.json();
-      console.log('Initial load - fetched hakeems with clinic data:', data);
-      
-      // Check if we actually received clinic data
-      if (data.length > 0) {
-        data.forEach((hakeem, index) => {
-          console.log(`Hakeem ${index + 1}:`, hakeem.name);
-          console.log(`Has clinic data: ${hakeem.clinic ? 'Yes' : 'No'}`);
-          if (hakeem.clinic) {
-            console.log('Clinic details:', hakeem.clinic);
-          }
-        });
-      }
-      
+      const data = await fetchApi('/api/hakeems/search');
       setHakeems(data);
+      setLoading(false);
     } catch (err) {
       setError('Failed to fetch hakeems. Please try again.');
-      console.error('Initial load error:', err);
-    } finally {
       setLoading(false);
     }
   };

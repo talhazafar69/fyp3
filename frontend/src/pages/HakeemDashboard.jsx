@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { fetchApi } from '../config/api';
 import '../styles/HakeemDashboard.css';
 
 const HakeemDashboard = () => {
@@ -23,40 +24,9 @@ const HakeemDashboard = () => {
       setError(null);
       
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          navigate('/login');
-          return;
-        }
-        
-        // Fetch user data
-        const userResponse = await fetch('/api/auth/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!userResponse.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        
-        const userData = await userResponse.json();
-        setDashboardData({
-          userName: userData.name || 'Dr. Hakeem'
-        });
-        
-        // Fetch appointments
-        const appointmentResponse = await fetch('/api/appointments', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!appointmentResponse.ok) {
-          throw new Error('Failed to fetch appointments');
-        }
-        
-        const appointmentData = await appointmentResponse.json();
+        const userData = await fetchApi('/api/auth/me');
+        setDashboardData({ userName: userData.name || 'Dr. Hakeem' });
+        const appointmentData = await fetchApi('/api/appointments');
         console.log('Fetched appointments:', appointmentData);
         
         // Format the appointments
@@ -88,24 +58,10 @@ const HakeemDashboard = () => {
   // Function to mark appointment as completed
   const markAsCompleted = async (id) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-      
-      const response = await fetch(`/api/appointments/${id}`, {
+      const response = await fetchApi(`/api/appointments/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
         body: JSON.stringify({ status: 'completed' })
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to update appointment status');
-      }
       
       // Update local state
       setAppointments(appointments.map(app => 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { fetchApi } from '../config/api';
 import '../styles/Profile.css';
 
 const Profile = () => {
@@ -28,51 +29,30 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          navigate('/auth');
-          return;
-        }
-
-        const response = await fetch('/api/users/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            // Token expired or invalid
-            localStorage.removeItem('token');
-            navigate('/auth');
-            return;
-          }
-          throw new Error('Failed to fetch user data');
-        }
-
-        const data = await response.json();
+        const data = await fetchApi('/api/users/me');
         setUserData({
           name: data.name,
           email: data.email,
           role: data.role,
           joinDate: data.createdAt || new Date().toISOString()
         });
-
         setFormData({
           name: data.name,
           email: data.email,
           password: '',
           confirmPassword: ''
         });
-
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching user data:', err);
+        if (err.message.includes('401')) {
+          localStorage.removeItem('token');
+          navigate('/auth');
+          return;
+        }
         setError('Failed to load profile data. Please try again later.');
         setLoading(false);
       }
     };
-
     fetchUserData();
   }, [navigate]);
 
@@ -88,71 +68,40 @@ const Profile = () => {
   // Handle profile update
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-    
-    // Validate passwords if provided
     if (formData.password && formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      
       // Prepare data for update (exclude confirmPassword and empty password)
       const updateData = {
         name: formData.name,
         email: formData.email
       };
-      
       if (formData.password) {
         updateData.password = formData.password;
       }
-
-      const response = await fetch('/api/users/me', {
+      const data = await fetchApi('/api/users/me', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
         body: JSON.stringify(updateData)
       });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Token expired or invalid
-          localStorage.removeItem('token');
-          navigate('/auth');
-          return;
-        }
-        throw new Error('Failed to update profile');
-      }
-
-      const data = await response.json();
-      
-      // Update user data with response
-      setUserData({
-        ...userData,
-        name: data.name,
-        email: data.email
-      });
-
+      setUserData({ ...userData, name: data.name, email: data.email });
       setEditMode(false);
       setLoading(false);
       setError(null);
-      
-      // Redirect to profile page to refresh with updated data
       navigate('/profile');
-      // Force a reload to ensure data is refreshed
       window.location.reload();
     } catch (err) {
-      console.error('Error updating profile:', err);
+      if (err.message.includes('401')) {
+        localStorage.removeItem('token');
+        navigate('/auth');
+        return;
+      }
       setError('Failed to update profile. Please try again.');
       setLoading(false);
     }
   };
-
-  
 
   // Handle logout
   const handleLogout = () => {
