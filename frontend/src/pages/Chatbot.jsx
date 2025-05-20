@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { fetchApi } from '../config/api';
 import '../styles/Chatbot.css';
 
 const Chatbot = () => {
@@ -25,28 +26,16 @@ const Chatbot = () => {
   useEffect(() => {
     const fetchChatHistory = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        // Fix the API endpoint to match backend route
-        const response = await fetch('/api/chatbot/history', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setChatHistory(data);
-        } else {
-          console.error('Failed to fetch chat history:', response.status);
-        }
+        const data = await fetchApi('/api/chatbot/history');
+        setChatHistory(data);
       } catch (error) {
         console.error('Error fetching chat history:', error);
       }
     };
 
-    fetchChatHistory();
+    if (localStorage.getItem('token')) {
+      fetchChatHistory();
+    }
   }, []);
 
   const scrollToBottom = () => {
@@ -70,8 +59,7 @@ const Chatbot = () => {
 
   const saveChatToHistory = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      if (!localStorage.getItem('token')) return;
 
       const firstUserMessage = messages.find(m => m.sender === 'user');
       const chatTitle = firstUserMessage ?
@@ -94,19 +82,10 @@ const Chatbot = () => {
         }
       });
 
-      // Fix the API endpoint to match backend route
-      const response = await fetch('/api/chatbot/history', {
+      await fetchApi('/api/chatbot/history', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
         body: JSON.stringify(chatData)
       });
-
-      if (!response.ok) {
-        console.error('Failed to save chat history:', response.status);
-      }
     } catch (error) {
       console.error('Error saving chat:', error);
     }
@@ -136,33 +115,22 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/chatbot', {
+      const data = await fetchApi('/api/chatbot', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
         body: JSON.stringify({
           message: inputMessage,
           chatId: currentChatId
         })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        const botMessage = {
-          id: messages.length + 2,
-          text: data.response,
-          sender: 'bot',
-          timestamp: new Date().toISOString()
-        };
-        setMessages(prevMessages => [...prevMessages, botMessage]);
-        saveChatToHistory();
-      } else {
-        console.error('Error from chatbot API:', response.status);
-        throw new Error('Failed to get response from chatbot');
-      }
+      const botMessage = {
+        id: messages.length + 2,
+        text: data.response,
+        sender: 'bot',
+        timestamp: new Date().toISOString()
+      };
+      setMessages(prevMessages => [...prevMessages, botMessage]);
+      saveChatToHistory();
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = {

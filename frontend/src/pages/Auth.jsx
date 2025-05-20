@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { fetchApi } from '../config/api';
 import '../styles/Auth.css';
 
 const Auth = () => {
@@ -73,41 +74,30 @@ const Auth = () => {
       }
     }
 
-    // Use correct backend URL
-    const baseUrl = 'http://localhost:5000'; // Change if your backend runs on different port or domain
     const endpoint = isLogin ? '/api/auth/login' : '/api/auth/signup';
 
     try {
-      const response = await fetch(baseUrl + endpoint, {
+      const data = await fetchApi(endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      setMessage(`${isLogin ? 'Login' : 'Signup'} successful! Redirecting...`);
 
-      if (response.ok) {
-        setMessage(`${isLogin ? 'Login' : 'Signup'} successful! Redirecting...`);
+      // Store token if present
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
 
-        // Store token if present
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-        }
-
-        // Redirect based on backend redirectUrl if provided
-        if (data.redirectUrl) {
-          window.location.href = data.redirectUrl;
-        } else {
-          window.location.href = '/'; // fallback redirect
-        }
+      // Redirect based on backend redirectUrl if provided
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
       } else {
-        setMessage(data.message || 'An error occurred. Please try again.');
+        window.location.href = '/'; // fallback redirect
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      setMessage('An error occurred. Please check the console for details.');
+      setMessage(error.message || 'An error occurred. Please try again.');
     }
   };
 
